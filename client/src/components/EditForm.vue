@@ -8,15 +8,15 @@
     align-content-center
     pa-3
   >
-    <v-flex xs12 sm8 md6 lg4>
+    <v-flex xs12>
       <v-form enctype="multipart/form-data" v-model="valid" ref="form" class="edit-form">
         <slot></slot>
         <v-toolbar flat class="transparent">
-          <v-btn flat color="primary" :click="$emit('delete')">
+          <v-btn flat color="primary" @click="$emit('delete')">
             Delete
           </v-btn>
           <v-spacer />
-          <v-btn :disabled="!valid" flat color="primary" :click="$emit('save')">
+          <v-btn :disabled="!valid" flat color="primary" @click="$emit('save')">
             Save
           </v-btn>
         </v-toolbar>

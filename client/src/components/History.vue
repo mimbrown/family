@@ -19,7 +19,7 @@
     <v-flex
       v-if="chapter"
       v-html="chapter.html"
-      xs12 sm10 md8
+      xs12 sm10 md8 text-left
     />
   </v-layout>
 </template>
@@ -64,3 +64,22 @@ export default {
   }
 };
 </script>
+
+<style>
+.float-right {
+  width: 300px;
+  max-width: 60%;
+  /* float: right;
+  border-radius: 5px;
+  margin-left: 10px;
+  transform: rotate(5deg);
+}
+.float-left {
+  width: 300px;
+  max-width: 60%; */
+  float: left;
+  border-radius: 5px;
+  margin-right: 10px;
+  transform: rotate(-5deg);
+}
+</style>

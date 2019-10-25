@@ -9,6 +9,7 @@ import Writings from './components/Writings';
 import Writing from './components/Writing';
 
 import SnapshotForm from './components/SnapshotForm';
+import HistoryForm from './components/HistoryForm';
 
 const routes = [
   { path: '/', redirect: '/members' },
@@ -18,11 +19,12 @@ const routes = [
   { path: '/writings', component: Writings },
   { path: '/writings/:id', component: Writing },
   { path: '/history', redirect: '/history/1' },
-  { path: '/history/:id', component: History },
+  { path: '/history/:id', component: History, meta: { editUrl: true } },
   { path: '/familytree', redirect: '/familytree/2' },
   { path: '/familytree/:id', component: FamilyTree },
 
-  { path: '/edit/members/:id', component: SnapshotForm }
+  { path: '/edit/members/:id', component: SnapshotForm },
+  { path: '/edit/history/:id', component: HistoryForm }
 ];
 
 const router = new VueRouter({ routes });
