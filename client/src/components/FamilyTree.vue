@@ -1,7 +1,7 @@
 <template>
-  <v-layout column>
-    <v-flex family-tree-container pa-3>
-      <svg v-if="view === 'tree'" class="family-tree">
+  <v-row class="fill-height">
+    <v-col v-if="$vuetify.breakpoint.mdAndUp || tree" class="family-tree-container" :style="{ 'margin-bottom': margin }" cols="12" md="6">
+      <svg class="family-tree pa-1">
         <FamilyGeneration
           v-if="parents"
           :members="parents"
@@ -70,59 +70,35 @@
           @select="onSelect" 
         />
       </svg>
-      <div v-else-if="view === 'text'" class="family-tree">
+    </v-col>
+    <v-col v-if="$vuetify.breakpoint.mdAndUp || text" class="family-tree-container" :style="{ 'margin-bottom': margin }" cols="12" md="6">
+      <div class="family-tree pa-3">
         <p>{{ buildInfo(current && current[0]) }}</p>
-        <v-expansion-panel>
-          <v-expansion-panel-content v-if="spouses">
-            <template v-slot:header>
-              <div>Spouses</div>
-            </template>
-            <v-list>
-              <v-list-tile @click="onSelect(member.id)" v-for="member in spouses" :key="member.id">
-                {{ member.nickname || member.first_name }} {{ member.last_name }}
-              </v-list-tile>
-            </v-list>
-          </v-expansion-panel-content>
-          <v-expansion-panel-content v-if="parents">
-            <template v-slot:header>
-              <div>Parents</div>
-            </template>
-            <v-list>
-              <v-list-tile @click="onSelect(member.id)" v-for="member in parents" :key="member.id">
-                {{ member.nickname || member.first_name }} {{ member.last_name }}
-              </v-list-tile>
-            </v-list>
-          </v-expansion-panel-content>
-          <v-expansion-panel-content v-if="allChildren">
-            <template v-slot:header>
-              <div>Children</div>
-            </template>
-            <v-list>
-              <v-list-tile @click="onSelect(member.id)" v-for="member in allChildren" :key="member.id">
-                {{ member.nickname || member.first_name }} {{ member.last_name }}
-              </v-list-tile>
-            </v-list>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
+        <v-expansion-panels v-if="relations.length > 0">
+          <v-expansion-panel v-for="(relation, i) in relations" :key="i">
+            <v-expansion-panel-header>{{ relation.title }}</v-expansion-panel-header>
+            <v-expansion-panel-content>
+              <v-list>
+                <v-list-item @click="onSelect(member.id)" v-for="member in relation.members" :key="member.id">
+                  {{ member.nickname || member.first_name }} {{ member.last_name }}
+                </v-list-item>
+              </v-list>
+            </v-expansion-panel-content>
+          </v-expansion-panel>
+        </v-expansion-panels>
       </div>
-    </v-flex>
-    <v-bottom-nav
-      :active.sync="view"
-      :value="true"
-      absolute
-      mandatory
-      color="transparent"
-    >
-      <v-btn value="tree">
-        <span>Tree View</span>
-        <v-icon>nature</v-icon>
-      </v-btn>
-      <v-btn value="text">
-        <span>Text View</span>
-        <v-icon>format_list_bulleted</v-icon>
-      </v-btn>
-    </v-bottom-nav>
-  </v-layout>
+    </v-col>
+    <v-footer absolute v-if="$vuetify.breakpoint.smAndDown">
+      <v-row justify="center">
+        <v-btn text :color="tree ? 'primary' : 'secondary'" @click="tree = !(text = false)">
+          <v-icon left>nature</v-icon> Tree View
+        </v-btn>
+        <v-btn text :color="text ? 'primary' : 'secondary'" @click="text = !(tree = false)">
+          <v-icon left>format_list_bulleted</v-icon> Text View
+        </v-btn>
+      </v-row>
+    </v-footer>
+  </v-row>
 </template>
 
 <script>
@@ -152,7 +128,8 @@ export default {
       selectedSigificantOther: null,
       selectedSigificantOtherIndex: 0,
       spouses: null,
-      view: 'tree'
+      text: false,
+      tree: true
     }
   },
   computed: {
@@ -164,9 +141,26 @@ export default {
       }
       return allChildren;
     },
+    margin () {
+      return this.$vuetify.breakpoint.mdAndUp ? '0' : '48px';
+    },
     marriage () {
       const { selectedSigificantOther } = this;
       return selectedSigificantOther && selectedSigificantOther.divorced;
+    },
+    relations () {
+      const relations = [];
+      const { spouses, parents, allChildren } = this;
+      if (spouses) {
+        relations.push({ title: 'Spouses', members: spouses });
+      }
+      if (parents) {
+        relations.push({ title: 'Parents', members: parents });
+      }
+      if (allChildren) {
+        relations.push({ title: 'Children', members: allChildren });
+      }
+      return relations;
     }
   },
   methods: {
@@ -254,7 +248,6 @@ export default {
 
 <style lang="scss">
 .family-tree-container {
-  margin-bottom: 56px;
   display: flex;
   flex-direction: row;
   align-items: stretch;

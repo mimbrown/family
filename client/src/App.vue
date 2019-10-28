@@ -1,61 +1,61 @@
 <template>
   <v-app>
-    <v-navigation-drawer app style="max-width: 80vw;" v-model="drawer">
-      <v-toolbar flat class="transparent">
-        <v-list class="pa-0">
-          <v-list-tile avatar>
-            <v-list-tile-avatar>
-              <img :src="profileImage">
-            </v-list-tile-avatar>
+    <v-navigation-drawer app v-model="drawer">
+      <v-list-item>
+        <v-list-item-avatar>
+          <img :src="profileImage">
+        </v-list-item-avatar>
 
-            <v-list-tile-content>
-              <v-list-tile-title>{{ name }}</v-list-tile-title>
-            </v-list-tile-content>
-          </v-list-tile>
-        </v-list>
-      </v-toolbar>
+        <v-list-item-content>
+          <v-list-item-title>{{ name }}</v-list-item-title>
+        </v-list-item-content>
+      </v-list-item>
 
       <v-list class="pt-0" dense>
         <v-divider></v-divider>
 
-        <v-list-tile
+        <v-list-item
           v-for="item in items"
           :key="item.title"
           :to="item.link"
         >
-          <v-list-tile-action>
+          <v-list-item-action>
             <v-icon>{{ item.icon }}</v-icon>
-          </v-list-tile-action>
+          </v-list-item-action>
 
-          <v-list-tile-content>
-            <v-list-tile-title>{{ item.title }}</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
-        <v-list-tile @click="logout">
-          <v-list-tile-action>
+          <v-list-item-content>
+            <v-list-item-title>{{ item.title }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+        <v-list-item @click="logout">
+          <v-list-item-action>
             <v-icon>exit_to_app</v-icon>
-          </v-list-tile-action>
+          </v-list-item-action>
 
-          <v-list-tile-content>
-            <v-list-tile-title>Logout</v-list-tile-title>
-          </v-list-tile-content>
-        </v-list-tile>
+          <v-list-item-content>
+            <v-list-item-title>Logout</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <v-toolbar app dark>
-      <v-toolbar-side-icon @click.stop="drawer = !drawer" />
-      <v-toolbar-title class="white--text">The Browns</v-toolbar-title>
+
+    <v-app-bar app dark>
+      <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
+      <v-toolbar-title>The Browns</v-toolbar-title>
 
       <v-spacer></v-spacer>
-      <v-toolbar-items v-if="editUrl">
-        <v-btn flat icon :to="editUrl">
-          <v-icon>create</v-icon>
-        </v-btn>
-      </v-toolbar-items>
-    </v-toolbar>
+
+      <v-btn text icon v-if="editUrl" :to="editUrl">
+        <v-icon>create</v-icon>
+      </v-btn>
+      <v-btn text icon v-for="tool of tools" :key="tool" @click="onToolClick(tool)">
+        <v-icon>{{ tool }}</v-icon>
+      </v-btn>
+    </v-app-bar>
+
     <v-content>
-      <v-container fluid fill-height pa-0>
-        <router-view></router-view>
+      <v-container fluid :pa-0="fullscreen || full" :class="fullscreen ? 'fill-height' : ''">
+        <router-view ref="currentComponent"></router-view>
       </v-container>
     </v-content>
     <!-- <v-footer app></v-footer> -->
@@ -80,6 +80,8 @@ export default {
     return {
       drawer: null,
       editUrl: null,
+      full: false,
+      fullscreen: false,
       name: null,
       profileImage: null,
       items: [
@@ -88,15 +90,25 @@ export default {
         { title: 'Writings', icon: 'create', link: '/writings' },
         { title: 'Family Tree', icon: 'nature', link: '/familytree' }
       ],
+      tools: []
     };
   },
   watch: {
-    '$route': 'setEditUrl'
+    '$route': {
+      handler: 'setMeta',
+      immediate: true
+    }
   },
   methods: {
-    setEditUrl () {
+    onToolClick (tool) {
+      this.$refs.currentComponent.onToolClick(tool);
+    },
+    setMeta () {
       const { $route } = this;
       this.editUrl = $route.meta.editUrl ? `/edit${$route.path}` : null;
+      this.fullscreen = !!$route.meta.fullscreen;
+      this.full = !!$route.meta.full;
+      this.tools = $route.meta.tools || [];
     },
     getUser (token) {
       const info = JSON.parse(atob(token.split('.')[1]));
@@ -112,61 +124,9 @@ export default {
 </script>
 
 <style lang="scss">
-// * {
-//   box-sizing: border-box;
-// }
-// html, body {
-//   width: 100%;
-//   height: 100%;
-//   margin: 0;
-//   padding: 0;
-// }
 #app {
-  // width: 100%;
-  // height: 100%;
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  // position: relative;
-  // display: flex;
-  // flex-direction: column;
 }
-// .header {
-//   height: 30px;
-//   background-color: red;
-//   display: flex;
-//   .header-side {
-//     flex: 1;
-//   }
-//   .header-left {
-//     justify-content: left;
-//   }
-// }
-// .menu {
-//   position: absolute;
-//   width: 100vw;
-//   height: 100vh;
-//   display: flex;
-//   .menu-content {
-//     width: 80vw;
-//     max-width: 320px;
-//     background-color: white;
-//   }
-//   .menu-mask {
-//     flex: 1;
-//     background-color: black;
-//     opacity: 0.5;
-//   }
-// }
-// .menu-left {
-//   right: 100%;
-//   &.active {
-//     right: 0;
-//   }
-// }
-// .main {
-//   flex: 1;
-// }
 </style>

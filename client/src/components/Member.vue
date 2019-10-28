@@ -1,14 +1,14 @@
 <template>
-  <v-layout row wrap pt-1 v-if="snapshot">
-    <v-flex xs12 sm6>
+  <v-row no-gutters v-if="snapshot">
+    <v-col class="pt-3" cols="12" sm="6">
       <v-toolbar flat class="transparent">
         <v-btn icon to="/members">
           <v-icon>keyboard_arrow_left</v-icon>
         </v-btn>
         <v-toolbar-title>{{snapshot.first_name}} {{snapshot.last_name}}</v-toolbar-title>
       </v-toolbar>
-    </v-flex>
-    <v-flex xs12 sm6 px-3>
+    </v-col>
+    <v-col class="pa-3" cols="12" sm="6">
       <v-combobox
         v-model="snapshot"
         :items="snapshots"
@@ -23,11 +23,11 @@
           </v-list-tile-content>
         </template>
       </v-combobox>
-    </v-flex>
-    <v-flex xs12 sm5 px-3 pb-3 text-xs-left>
+    </v-col>
+    <v-col cols="12" sm="5" class="pb-3 px-3">
       {{ snapshot.description }}
-    </v-flex>
-    <v-flex xs12 sm7>
+    </v-col>
+    <v-col cols="12" sm="7">
       <v-carousel>
         <v-carousel-item
           v-for="(src,i) in snapshot.images"
@@ -35,8 +35,8 @@
           :src="src"
         ></v-carousel-item>
       </v-carousel>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>

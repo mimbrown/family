@@ -14,5 +14,8 @@ module.exports = {
   },
   devServer: {
     before: configureApi
-  }
+  },
+  transpileDependencies: [
+    'vuetify'
+  ]
 };

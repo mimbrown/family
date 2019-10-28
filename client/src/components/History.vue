@@ -1,6 +1,6 @@
 <template>
-  <v-layout row wrap pa-3 justify-center>
-    <v-flex xs12 sm10 md8>
+  <v-row no-gutters justify="center">
+    <v-col cols="12" sm="10" md="8">
       <v-combobox
         v-model="chapter"
         :items="chapters"
@@ -15,13 +15,13 @@
           </v-list-tile-content>
         </template>
       </v-combobox>
-    </v-flex>
-    <v-flex
+    </v-col>
+    <v-col
       v-if="chapter"
       v-html="chapter.html"
-      xs12 sm10 md8 text-left
+      cols="12" sm="10" md="8"
     />
-  </v-layout>
+  </v-row>
 </template>
 
 <script>
@@ -68,18 +68,18 @@ export default {
 <style>
 .float-right {
   width: 300px;
-  max-width: 60%;
-  /* float: right;
+  max-width: 50%;
+  float: right;
   border-radius: 5px;
-  margin-left: 10px;
+  margin-left: 15px;
   transform: rotate(5deg);
 }
 .float-left {
   width: 300px;
-  max-width: 60%; */
+  max-width: 50%;
   float: left;
   border-radius: 5px;
-  margin-right: 10px;
+  margin-right: 15px;
   transform: rotate(-5deg);
 }
 </style>

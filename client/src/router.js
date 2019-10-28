@@ -15,13 +15,13 @@ const routes = [
   { path: '/', redirect: '/members' },
   { path: '/login', component: Login },
   { path: '/members', component: Members },
-  { path: '/members/:id', component: Member, meta: { editUrl: true } },
+  { path: '/members/:id', component: Member, meta: { editUrl: true, full: true } },
   { path: '/writings', component: Writings },
-  { path: '/writings/:id', component: Writing },
+  { path: '/writings/:id', component: Writing, meta: { tools: ['list'] } },
   { path: '/history', redirect: '/history/1' },
   { path: '/history/:id', component: History, meta: { editUrl: true } },
   { path: '/familytree', redirect: '/familytree/2' },
-  { path: '/familytree/:id', component: FamilyTree },
+  { path: '/familytree/:id', component: FamilyTree, meta: { fullscreen: true } },
 
   { path: '/edit/members/:id', component: SnapshotForm },
   { path: '/edit/history/:id', component: HistoryForm }

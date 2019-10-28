@@ -44,9 +44,10 @@ api.route('/chapters')
 api.route('/writings')
   .get(async (req, res) => {
     try {
-      const rows = await knex('resource')
-        .select('id', 'title', 'type', 'date')
-        .orderBy('date', 'desc');
+      const rows = await knex('resource as r')
+        .select('r.id', 'r.title', 'r.type', 'r.date', 'm.first_name', 'm.profile_image')
+        .join('member as m', 'r.member_id', 'm.id')
+        .orderBy('r.date', 'desc');
       res.respond(rows);
     } catch (err) {
       res.status(500).json({

@@ -1,25 +1,28 @@
 <template>
-  <v-layout row wrap align-content-start pa-1>
-    <v-flex
+  <v-row dense align-content-start pa-1>
+    <v-col
       v-for="writing of writings"
       :key="writing.id"
-      xs6 sm4 lg3
+      :cols="cols"
     >
-      <v-card hover class="ma-1" :to="`/writings/${writing.id}`">
-        <div :class="`writing writing-${writing.type}`"></div>
-        <v-card-text class="pt-0">
-          <!-- {{ writing.title }} -->
-          <div>
-            <div class="headline">{{ writing.title }}</div>
-            <div class="grey--text">By {{ writing.author }}</div>
-            <div class="grey--text">{{ displayDate(writing.date) }}</div>
+      <v-card :to="`/writings/${writing.id}`">
+        <div class="d-flex">
+          <div class="writing-wrap">
+            <div :class="`writing writing-${writing.type}`">
+              {{ writing.type }}
+            </div>
           </div>
-        </v-card-text>
-        <!-- <div class="author">By {{ writing.author }}</div>
-        <div class="date">{{ displayDate(writing.date) }}</div> -->
+          <v-avatar class="my-3 ml-7 mr-1" size="64">
+            <v-img :alt="writing.first_name" :src="writing.profile_image"></v-img>
+          </v-avatar>
+          <div class="writing-display">
+            <v-card-title class="writing-title px-2">{{ writing.title }}</v-card-title>
+            <v-card-subtitle class="px-2">{{ displayDate(writing.date) }}</v-card-subtitle>
+          </div>
+        </div>
       </v-card>
-    </v-flex>
-  </v-layout>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -30,44 +33,89 @@ export default {
   name: 'Writings',
   data () {
     return {
+      cols: 12,
+      html: null,
+      isWriting: true,
+      selectMode: false,
+      title: null,
       writings: []
     }
   },
   async created () {
     const { data } = await axios('/api/writings');
     this.writings = data;
+    if (ResizeObserver) {
+      const sizer = this.sizer = new ResizeObserver(
+        ([{ contentRect: { width } }]) => (
+          this.cols = width < 700 ? 12 :
+            (width < 1050 ? 6 : 4)
+        )
+      );
+      sizer.observe(this.$el);
+    }
+  },
+  beforeDestroy () {
+    if (this.sizer) {
+      this.sizer.disconnect();
+      delete this.sizer;
+    }
   },
   methods: {
+    async checkRoute () {
+      const { id } = this.$route.params;
+      this.isWriting = !!id;
+      if (id) {
+        const { data } = await axios.get(`/api/writings/${id}`);
+        Object.assign(this, data);
+      }
+    },
     displayDate (date) {
       return moment(date).format('ll');
+    }
+  },
+  watch: {
+    $route: {
+      handler: 'checkRoute',
+      immediate: true
     }
   }
 };
 </script>
 
 <style lang="scss">
+.writing-display {
+  flex: 1;
+  min-width: 0;
+}
+.writing-title {
+  white-space: nowrap;
+  overflow: hidden;
+}
+.writing-wrap {
+  width: 88px;
+  height: 88px;
+  transform: rotate(-90deg);
+  position: absolute;
+  left: 0;
+  top: 0;
+  border-top-right-radius: inherit;
+  border-top-left-radius: inherit;
+}
 .writing {
-    font-size: 80px;
-    // height: 100px;
-    // padding: 9px 0;
+  font-size: 14px;
+  text-align: center;
+  color: white;
+  font-variant: small-caps;
+  border-top-right-radius: inherit;
+  border-top-left-radius: inherit;
 }
 .writing-poem {
-    &::before {
-        content: "[ P ]";
-    }
-    color: lightblue;
+  background-color: lightblue;
 }
 .writing-story {
-    &::before {
-        content: "[ S ]";
-    }
-    color: lightcoral;
+  background-color: lightcoral;
 }
 .writing-letter {
-    &::before {
-        content: "[ L ]";
-    }
-    color: lightgreen;
+  background-color: lightgreen;
 }
 </style>
-
