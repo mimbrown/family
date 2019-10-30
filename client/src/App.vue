@@ -45,11 +45,8 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn text icon v-if="editUrl" :to="editUrl">
-        <v-icon>create</v-icon>
-      </v-btn>
-      <v-btn text icon v-for="tool of tools" :key="tool" @click="onToolClick(tool)">
-        <v-icon>{{ tool }}</v-icon>
+      <v-btn text icon v-for="tool of tools" :key="tool.icon" @click="onToolClick(tool)">
+        <v-icon>{{ tool.icon }}</v-icon>
       </v-btn>
     </v-app-bar>
 
@@ -63,12 +60,7 @@
 </template>
 
 <script>
-import EditForm from './components/EditForm';
-
 export default {
-  components: {
-    EditForm
-  },
   name: 'app',
   created () {
     const token = window.localStorage.getItem('accessToken');
@@ -79,7 +71,6 @@ export default {
   data () {
     return {
       drawer: null,
-      editUrl: null,
       full: false,
       fullscreen: false,
       name: null,
@@ -101,11 +92,10 @@ export default {
   },
   methods: {
     onToolClick (tool) {
-      this.$refs.currentComponent.onToolClick(tool);
+      this.$refs.currentComponent[tool.fn](tool);
     },
     setMeta () {
       const { $route } = this;
-      this.editUrl = $route.meta.editUrl ? `/edit${$route.path}` : null;
       this.fullscreen = !!$route.meta.fullscreen;
       this.full = !!$route.meta.full;
       this.tools = $route.meta.tools || [];

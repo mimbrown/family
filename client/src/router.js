@@ -8,18 +8,23 @@ import History from './components/History';
 import Writings from './components/Writings';
 import Writing from './components/Writing';
 
-import SnapshotForm from './components/SnapshotForm';
-import HistoryForm from './components/HistoryForm';
+import SnapshotForm from './components/forms/SnapshotForm';
+import HistoryForm from './components/forms/HistoryForm';
 
 const routes = [
   { path: '/', redirect: '/members' },
   { path: '/login', component: Login },
   { path: '/members', component: Members },
-  { path: '/members/:id', component: Member, meta: { editUrl: true, full: true } },
+  { path: '/members/:id', component: Member, meta: { tools: [
+    { icon: 'create', fn: 'startEditing' }
+  ], full: true } },
   { path: '/writings', component: Writings },
   { path: '/writings/:id', component: Writing, meta: { tools: ['list'] } },
   { path: '/history', redirect: '/history/1' },
-  { path: '/history/:id', component: History, meta: { editUrl: true } },
+  { path: '/history/:id', component: History, meta: { tools: [
+    { icon: 'create', fn: 'startEditing' },
+    { icon: 'add', fn: 'addNew' }
+  ] } },
   { path: '/familytree', redirect: '/familytree/2' },
   { path: '/familytree/:id', component: FamilyTree, meta: { fullscreen: true } },
 

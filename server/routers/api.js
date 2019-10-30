@@ -6,8 +6,13 @@ function respond (rows) {
   return this.json(rows);
 }
 
+function succeed () {
+  return this.json({ success: true });
+}
+
 api.use((req, res, next) => {
   res.respond = respond;
+  res.succeed = succeed;
   next();
 });
 
@@ -32,13 +37,21 @@ api.route('/token')
 api.route('/chapters')
   .get(async (req, res) => {
     try {
-      const rows = await knex('chapter');
+      const rows = await knex('chapter').orderBy('chapter_num');
       res.respond(rows);
     } catch (err) {
       res.status(500).json({
         code: 'ServerError'
       });
     }
+  });
+
+api.route('/chapters/:chapter')
+  .put(async (req, res) => {
+    await knex('chapter')
+      .update(req.body)
+      .where('chapter_num', req.params.chapter);
+    res.succeed();
   });
 
 api.route('/writings')

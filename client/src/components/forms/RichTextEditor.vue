@@ -15,6 +15,7 @@ const toolbar = [
   [{ color: [] }, { background: [] }],
   [{ font: [] }],
   [{ align: [] }],
+  ['image']
   // ['clean']
 ];
 
@@ -63,3 +64,20 @@ export default {
 }
 </script>
 
+<style>
+.ql-editor img {
+  width: 300px;
+  max-width: 50% !important;
+  border-radius: 5px;
+}
+.ql-editor img:nth-of-type(odd) {
+  float: right;
+  margin-left: 15px;
+  transform: rotate(5deg);
+}
+.ql-editor img:nth-of-type(even) {
+  float: left;
+  margin-right: 15px;
+  transform: rotate(-5deg);
+}
+</style>

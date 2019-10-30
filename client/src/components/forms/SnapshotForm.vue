@@ -1,5 +1,5 @@
 <template>
-  <EditForm>
+  <FormWrap>
     <v-textarea
       v-model="model.description"
       label="Description"
@@ -11,15 +11,15 @@
       multiple="true"
       type="file"
     />
-  </EditForm>
+  </FormWrap>
 </template>
 
 <script>
-import EditForm from './EditForm';
+import FormWrap from './FormWrap';
 
 export default {
   components: {
-    EditForm
+    FormWrap
   },
   name: 'SnapshotForm',
   data () {

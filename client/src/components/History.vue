@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters justify="center">
     <v-col cols="12" sm="10" md="8">
-      <v-combobox
+      <v-autocomplete
         v-model="chapter"
         :items="chapters"
         type="button"
@@ -10,25 +10,35 @@
           {{ displayChapter(item) }}
         </template>
         <template v-slot:item="{ item }">
-          <v-list-tile-content>
+          <v-list-item-content>
             {{ displayChapter(item) }}
-          </v-list-tile-content>
+          </v-list-item-content>
         </template>
-      </v-combobox>
+      </v-autocomplete>
     </v-col>
     <v-col
       v-if="chapter"
       v-html="chapter.html"
+      class="history-content"
       cols="12" sm="10" md="8"
     />
+    <HistoryForm ref="editForm" :editing="editing" @commit="commitModel" />
   </v-row>
 </template>
 
 <script>
 import axios from 'axios';
+import HistoryForm from './forms/HistoryForm';
+import Editable from './Editable';
 
 export default {
   name: 'History',
+
+  mixins: [Editable],
+
+  components: {
+    HistoryForm
+  },
 
   data () {
     return {
@@ -58,27 +68,35 @@ export default {
     }
   },
   methods: {
+    commitModel (model) {
+      Object.assign(this.chapter, model);
+    },
     displayChapter (item) {
       return `Chapter ${item.chapter_num} - ${item.title}`;
+    },
+    getModel () {
+      const { chapter } = this;
+      const model = Object.assign({}, chapter);
+      delete model.chapter_num;
+      return { id: chapter.chapter_num, model };
     }
   }
 };
 </script>
 
 <style>
-.float-right {
+.history-content img {
   width: 300px;
   max-width: 50%;
-  float: right;
   border-radius: 5px;
+}
+.history-content img:nth-of-type(odd) {
+  float: right;
   margin-left: 15px;
   transform: rotate(5deg);
 }
-.float-left {
-  width: 300px;
-  max-width: 50%;
+.history-content img:nth-of-type(even) {
   float: left;
-  border-radius: 5px;
   margin-right: 15px;
   transform: rotate(-5deg);
 }

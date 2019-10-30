@@ -1,5 +1,5 @@
 <template>
-  <EditForm @save="save">
+  <FormWrap ref="main" :editing="editing" @save="save">
     <v-text-field
       v-model="model.title"
       label="Title"
@@ -7,34 +7,31 @@
       required
     />
     <RichTextEditor
-      v-model="model.text"
+      v-model="model.html"
     />
-  </EditForm>
+  </FormWrap>
 </template>
 
 <script>
-import EditForm from './EditForm';
+import FormWrap from './FormWrap';
 import RichTextEditor from './RichTextEditor';
+import FormBase from './FormBase';
 
 export default {
   components: {
-    EditForm,
+    FormWrap,
     RichTextEditor
   },
+  mixins: [FormBase],
   name: 'HistoryForm',
   data () {
     return {
       model: {
-        text: null,
+        html: null,
         title: null
       },
-      required: v => !!v || 'This field is required'
+      src: '/api/chapters'
     };
-  },
-  methods: {
-    save () {
-      debugger
-    }
   }
 };
 </script>
