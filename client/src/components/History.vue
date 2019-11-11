@@ -1,20 +1,17 @@
 <template>
   <v-row no-gutters justify="center">
     <v-col cols="12" sm="10" md="8">
-      <v-autocomplete
+      <v-select
         v-model="chapter"
         :items="chapters"
-        type="button"
       >
         <template v-slot:selection="{ item }">
           {{ displayChapter(item) }}
         </template>
         <template v-slot:item="{ item }">
-          <v-list-item-content>
-            {{ displayChapter(item) }}
-          </v-list-item-content>
+          {{ displayChapter(item) }}
         </template>
-      </v-autocomplete>
+      </v-select>
     </v-col>
     <v-col
       v-if="chapter"
@@ -22,12 +19,13 @@
       class="history-content"
       cols="12" sm="10" md="8"
     />
-    <HistoryForm ref="editForm" :editing="editing" @commit="commitModel" />
+    <HistoryForm ref="editForm" :editing="editing" @edited="onEdited" @added="onAdded" />
   </v-row>
 </template>
 
 <script>
 import axios from 'axios';
+import moment from 'moment';
 import HistoryForm from './forms/HistoryForm';
 import Editable from './Editable';
 
@@ -59,26 +57,41 @@ export default {
       get () {
         const { chapters, $route } = this;
         const { id } = $route.params;
-        const chapterNum = Number(id);
-        return chapters.find(chapter => chapter.chapter_num === chapterNum);
+        if (id) {
+          return chapters.find(chapter => chapter.id === id);
+        } else {
+          return chapters[0];
+        }
       },
       set (chapter) {
-        this.$router.push({ path: `/history/${chapter.chapter_num}` });
+        if (chapter !== this.chapter) {
+          this.$router.push({ path: `/history/${chapter.id}` });
+        }
       }
     }
   },
   methods: {
-    commitModel (model) {
+    onEdited (model) {
       Object.assign(this.chapter, model);
     },
+    onAdded (model) {
+      const { chapters, $router } = this;
+      let i = 0;
+      for (; i < chapters.length; i++) {
+        if (chapters[i].chapter_date > model.chapter_date) {
+          break;
+        }
+      }
+      chapters.splice(i, 0, model);
+      $router.push({ path: `/history/${model.id}` });
+    },
     displayChapter (item) {
-      return `Chapter ${item.chapter_num} - ${item.title}`;
+      return `Chapter ${this.chapters.indexOf(item) + 1} - ${item.title} (${moment(item.chapter_date).format('MM/DD/YYYY')})`;
     },
     getModel () {
       const { chapter } = this;
       const model = Object.assign({}, chapter);
-      delete model.chapter_num;
-      return { id: chapter.chapter_num, model };
+      return { id: chapter.id, model };
     }
   }
 };

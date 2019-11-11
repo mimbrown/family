@@ -5,7 +5,7 @@
 
       <v-spacer />
 
-      <v-btn text icon @click="active = false">
+      <v-btn text icon @click="$emit('cancel', $refs.form)">
         <v-icon>cancel</v-icon>
       </v-btn>
     </v-toolbar>
@@ -33,7 +33,7 @@
         <v-btn text color="primary" style="flex: 1;">
           <v-icon left>delete</v-icon> Delete
         </v-btn>
-        <v-btn text :disabled="!valid" color="primary" style="flex: 1;" @click="$emit('save', editing)">
+        <v-btn text :disabled="!valid" color="primary" style="flex: 1;" @click="$emit('save', $refs.form)">
           <v-icon left>save</v-icon> Save
         </v-btn>
       </v-row>

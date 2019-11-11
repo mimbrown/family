@@ -17,10 +17,13 @@ const routes = [
   { path: '/members', component: Members },
   { path: '/members/:id', component: Member, meta: { tools: [
     { icon: 'create', fn: 'startEditing' }
-  ], full: true } },
+  ], fullscreen: true } },
   { path: '/writings', component: Writings },
   { path: '/writings/:id', component: Writing, meta: { tools: ['list'] } },
-  { path: '/history', redirect: '/history/1' },
+  { path: '/history', component: History, meta: { tools: [
+    { icon: 'create', fn: 'startEditing' },
+    { icon: 'add', fn: 'addNew' }
+  ] } },
   { path: '/history/:id', component: History, meta: { tools: [
     { icon: 'create', fn: 'startEditing' },
     { icon: 'add', fn: 'addNew' }

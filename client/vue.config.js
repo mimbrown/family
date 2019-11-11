@@ -8,7 +8,8 @@ module.exports = {
     resolve: {
       alias: {
         components: path.resolve(__dirname, './src/components'),
-        mixins: path.resolve(__dirname, './src/mixins')
+        mixins: path.resolve(__dirname, './src/mixins'),
+        utils: path.resolve(__dirname, './src/utils')
       }
     }
   },

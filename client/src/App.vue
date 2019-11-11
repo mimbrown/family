@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-navigation-drawer app v-model="drawer">
-      <v-list-item>
+      <v-list-item :style="`height: ${$vuetify.application.top}px;`">
         <v-list-item-avatar>
           <img :src="profileImage">
         </v-list-item-avatar>
@@ -51,7 +51,7 @@
     </v-app-bar>
 
     <v-content>
-      <v-container fluid :pa-0="fullscreen || full" :class="fullscreen ? 'fill-height' : ''">
+      <v-container fluid :style="{ 'max-height': maxHeight }" :pa-0="fullscreen" :class="fullscreen ? 'fill-height' : ''">
         <router-view ref="currentComponent"></router-view>
       </v-container>
     </v-content>
@@ -62,6 +62,11 @@
 <script>
 export default {
   name: 'app',
+  computed: {
+    maxHeight () {
+      return this.fullscreen ? `calc(100vh - ${this.$vuetify.application.top}px)` : null;
+    }
+  },
   created () {
     const token = window.localStorage.getItem('accessToken');
     if (token) {
@@ -71,7 +76,6 @@ export default {
   data () {
     return {
       drawer: null,
-      full: false,
       fullscreen: false,
       name: null,
       profileImage: null,
@@ -97,7 +101,6 @@ export default {
     setMeta () {
       const { $route } = this;
       this.fullscreen = !!$route.meta.fullscreen;
-      this.full = !!$route.meta.full;
       this.tools = $route.meta.tools || [];
     },
     getUser (token) {

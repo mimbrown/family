@@ -7,15 +7,11 @@ export default {
   methods: {
     addNew () {
       this.editing = false;
-      this.$refs.editForm.activate();
+      this.$refs.editForm.activate(this.getDefaultModel && this.getDefaultModel());
     },
     startEditing () {
       this.editing = true;
-      const form = this.$refs.editForm;
-      form.activate();
-      const data = this.getModel();
-      Object.assign(form, data);
-      form.originalModel = Object.assign({}, data.model);
+      this.$refs.editForm.activate(this.getModel());
     }
   }
 };

@@ -1,8 +1,13 @@
 <template>
-  <div></div>
+  <div>
+    <div></div>
+    <Pictures v-model="images" @select="onImageSelect" />
+  </div>
 </template>
 
 <script>
+import Pictures from '../Pictures';
+
 const toolbar = [
   ['bold', 'italic', 'underline', 'strike'],
   // ['blockquote', 'code-block'],
@@ -20,19 +25,35 @@ const toolbar = [
 ];
 
 export default {
+  components: {
+    Pictures
+  },
+  inject: {
+    form: { default: null }
+  },
+  created () {
+    this.form && this.form.register(this);
+  },
+  beforeDestroy () {
+    this.form && this.form.unregister(this);
+  },
   name: 'RichTextEditor',
   mounted () {
-    this.quill = new Quill(this.$el, {
+    this.quill = new Quill(this.$el.firstChild, {
       modules: {
         toolbar
       },
       theme: 'snow'
     });
+    this.quill.getModule('toolbar').addHandler('image', (value) => {
+      this.quill._lastSelection = this.quill.getSelection();
+      this.images = true;
+    });
     if (this.value) {
       this.quill.pasteHTML(this.value)
     }
     this.quill.on('text-change', () => {
-      let html = this.$el.children[0].innerHTML
+      let html = this.$el.querySelector('.ql-editor').innerHTML;
       const quill = this.quill
       const text = quill.getText()
       if (html === '<p><br></p>') html = ''
@@ -43,8 +64,19 @@ export default {
   },
   data () {
     return {
+      images: false,
       quill: null
     };
+  },
+  methods: {
+    onImageSelect (selection) {
+      const { index } = this.quill._lastSelection;
+      delete this.quill._lastSelection;
+      this.quill.insertEmbed(index, 'image', selection.src);
+    },
+    reset () {
+      this.quill.setText('');
+    }
   },
   props: {
     value: String
@@ -55,7 +87,7 @@ export default {
         if (value && value !== this._content) {
           this._content = value
           this.quill.pasteHTML(value)
-        } else if(!value) {
+        } else if (!value) {
           this.quill.setText('')
         }
       }

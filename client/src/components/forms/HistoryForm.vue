@@ -1,9 +1,14 @@
 <template>
-  <FormWrap ref="main" :editing="editing" @save="save">
+  <FormWrap ref="main" :editing="editing" @save="save" @cancel="cancel">
     <v-text-field
       v-model="model.title"
       label="Title"
       :rules="[required]"
+      required
+    />
+    <DateField
+      v-model="model.chapter_date"
+      label="Date"
       required
     />
     <RichTextEditor
@@ -14,11 +19,13 @@
 
 <script>
 import FormWrap from './FormWrap';
-import RichTextEditor from './RichTextEditor';
 import FormBase from './FormBase';
+import RichTextEditor from './RichTextEditor';
+import DateField from '../DateField';
 
 export default {
   components: {
+    DateField,
     FormWrap,
     RichTextEditor
   },
@@ -27,6 +34,7 @@ export default {
   data () {
     return {
       model: {
+        chapter_date: null,
         html: null,
         title: null
       },
